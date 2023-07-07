@@ -10,7 +10,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Table
 public class Post extends Timestamped{
