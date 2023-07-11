@@ -14,6 +14,7 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+
     public PostResponseDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
@@ -21,5 +22,10 @@ public class PostResponseDto {
         this.contents = post.getContents();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
+        this.commentList = (post.getCommentList() == null) ? null : post.getCommentList()
+                .stream()
+                .sorted(Comparator.comparing(Comment::getCreatedAt).reversed())
+                .map(CommentResponseDto::new)
+                .toList();
     }
 }

@@ -1,6 +1,7 @@
 package com.sparta.lv2.controller;
 
-import com.sparta.lv2.dto.UserRequestDto;
+import com.sparta.lv2.dto.LoginRequestDto;
+import com.sparta.lv2.dto.SignupRequestDto;
 import com.sparta.lv2.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +23,13 @@ public class UserController {
 
     // 회원가입 API
     @PostMapping("/auth/signup")
-    public ResponseEntity<String> signup(@RequestBody @Valid UserRequestDto requestDto){
-        // 정규식 통과 못하면 MethodArgumentNotValidException 발생
-
+    public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) {
         return userService.signup(requestDto);
     }
 
-//     로그인 API
+    // 로그인 API
     @PostMapping("/auth/login")
-    public ResponseEntity<String> login(@RequestBody UserRequestDto requestDto){
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto) {
         return userService.login(requestDto);
     }
-
 }

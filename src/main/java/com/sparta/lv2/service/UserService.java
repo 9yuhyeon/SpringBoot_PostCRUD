@@ -1,7 +1,9 @@
 package com.sparta.lv2.service;
 
-import com.sparta.lv2.dto.UserRequestDto;
+import com.sparta.lv2.dto.LoginRequestDto;
+import com.sparta.lv2.dto.SignupRequestDto;
 import com.sparta.lv2.entity.User;
+import com.sparta.lv2.entity.UserRoleEnum;
 import com.sparta.lv2.jwt.JwtUtil;
 import com.sparta.lv2.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,32 +28,42 @@ public class UserService {
         this.httpServletResponse = httpServletResponse;
     }
 
-    public ResponseEntity<String> signup(UserRequestDto requestDto) {
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+
+    public ResponseEntity<String> signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         Optional<User> findUser = userRepository.findByUsername(username);
         if (findUser.isPresent()) {
-            throw new IllegalArgumentException("중복된 이름입니다.");
+            throw new IllegalArgumentException("중복된 username 입니다.");
         }
 
-        User user = new User(username, password);
+        // 사용자 ROLE(권한) 확인
+        UserRoleEnum role = UserRoleEnum.USER; // role 기본값 : USER
+        if (requestDto.isAdmin()) {
+            if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 관리자 등록이 불가능합니다.");
+            }
+            role = UserRoleEnum.ADMIN;
+        }
+
+        // 사용자 등록
+        User user = new User(username, password, role);
         userRepository.save(user);
 
         return new ResponseEntity<>("msg : 로그인 성공.", HttpStatus.OK);
     }
 
-    public ResponseEntity<String> login(UserRequestDto requestDto) {
+    public ResponseEntity<String> login(LoginRequestDto requestDto) {
         User user = userRepository.findByUsername(requestDto.getUsername()).orElseThrow(() ->
-                    new NullPointerException("해당 유저는 존재하지 않습니다.")
+                new IllegalArgumentException("회원을 찾을 수 없습니다.")
         );
-        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
-            // false => 예외처리
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
         } else {
-            // true => JWT 생성
             String token = jwtUtil.createToken(user.getId(), user.getUsername());
-            // header에 저장
             httpServletResponse.setHeader("Authorization", token);
             // ResponseDto에 msg, statusCode 반환
             return new ResponseEntity<>("msg : 로그인 성공.", HttpStatus.OK);

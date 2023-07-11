@@ -1,18 +1,19 @@
 package com.sparta.lv2.entity;
 
 import com.sparta.lv2.dto.PostRequestDto;
-import com.sparta.lv2.dto.PostResponseDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
 @Getter
 @NoArgsConstructor
 @Table
-public class Post extends Timestamped{
+public class Post extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +24,7 @@ public class Post extends Timestamped{
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "contents", nullable = false)
+    @Column(name = "contents")
     private String contents;
 
     public Post(PostRequestDto requestDto, String username) {
