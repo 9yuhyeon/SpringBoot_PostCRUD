@@ -2,7 +2,6 @@ package com.sparta.lv2.controller;
 
 import com.sparta.lv2.dto.PostRequestDto;
 import com.sparta.lv2.dto.PostResponseDto;
-import com.sparta.lv2.entity.Post;
 import com.sparta.lv2.jwt.JwtUtil;
 import com.sparta.lv2.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +35,7 @@ public class PostController {
     }
 
     // 전체 게시글 조회 API
-    @GetMapping("/posts")
+    @GetMapping("/post")
     public List<PostResponseDto> getAllPosts() {
         return postService.getAllposts();
     }

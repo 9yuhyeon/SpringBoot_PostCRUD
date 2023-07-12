@@ -69,4 +69,11 @@ public class JwtUtil {
                 .get("username", String.class);
     }
 
+    public Claims getUserInfoClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build().parseClaimsJws(token)
+                .getBody();
+    }
+
 }

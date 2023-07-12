@@ -7,6 +7,7 @@ import com.sparta.lv2.entity.UserRoleEnum;
 import com.sparta.lv2.jwt.JwtUtil;
 import com.sparta.lv2.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,19 +16,14 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final HttpServletResponse httpServletResponse;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, HttpServletResponse httpServletResponse) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-        this.httpServletResponse = httpServletResponse;
-    }
-
+    // 관리자 검증 토큰 : 보통 외부에서 랜덤으로 생성된 토큰을 발급해서 외부에서 검증
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     public ResponseEntity<String> signup(SignupRequestDto requestDto) {
@@ -53,7 +49,7 @@ public class UserService {
         User user = new User(username, password, role);
         userRepository.save(user);
 
-        return new ResponseEntity<>("msg : 로그인 성공.", HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
     }
 
     public ResponseEntity<String> login(LoginRequestDto requestDto) {
@@ -66,8 +62,8 @@ public class UserService {
         } else {
             String token = jwtUtil.createToken(user.getId(), user.getUsername());
             httpServletResponse.setHeader("Authorization", token);
-            // ResponseDto에 msg, statusCode 반환
-            return new ResponseEntity<>("msg : 로그인 성공.", HttpStatus.OK);
+
+            return ResponseEntity.ok("로그인 성공.");
         }
     }
 }

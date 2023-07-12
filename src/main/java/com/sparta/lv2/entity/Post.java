@@ -27,6 +27,13 @@ public class Post extends Timestamped {
     @Column(name = "contents")
     private String contents;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList = new ArrayList<>();
+
     public Post(PostRequestDto requestDto, String username) {
         this.username = username;
         this.title = requestDto.getTitle();

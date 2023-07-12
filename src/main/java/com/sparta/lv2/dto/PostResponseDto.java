@@ -1,9 +1,14 @@
 package com.sparta.lv2.dto;
 
+import com.sparta.lv2.entity.Comment;
 import com.sparta.lv2.entity.Post;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class PostResponseDto {
@@ -13,6 +18,8 @@ public class PostResponseDto {
     private String contents;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private List<CommentResponseDto> commentList = new ArrayList<>();
 
 
     public PostResponseDto(Post post) {
