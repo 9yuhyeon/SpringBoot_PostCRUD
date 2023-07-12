@@ -41,7 +41,8 @@ public class UserService {
 
         // 사용자 ROLE(권한) 확인
         UserRoleEnum role = UserRoleEnum.USER; // role 기본값 : USER
-        if (requestDto.isAdmin()) {
+
+        if (requestDto.getAdminToken() != "") {
             if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
                 throw new IllegalArgumentException("관리자 암호가 틀려 관리자 등록이 불가능합니다.");
             }
